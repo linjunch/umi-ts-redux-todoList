@@ -11,9 +11,8 @@ const TodoList = (props: ListPropsType) => {
     dispatch,
     list: { currentList },
   } = props;
-  console.log(currentList);
 
-  const [iptValue, setIptValue] = useState('');
+  const [iptValue, setIptValue] = useState<string>('');
 
   const handleIptChange = (value: string) => {
     setIptValue(value);
@@ -71,20 +70,27 @@ const TodoList = (props: ListPropsType) => {
   };
 
   const deleteFinished = () => {
-    dispatch({
-      type: 'list/deleteFinished',
-    });
-    message.success({
-      content: 'delete success',
-      duration: 0.5,
-    });
+    if (currentList.find(item => item.isFinished === true)) {
+      dispatch({
+        type: 'list/deleteFinished',
+      });
+      message.success({
+        content: 'delete success',
+        duration: 0.5,
+      });
+    } else {
+      message.error({
+        content: 'Please select at least one',
+        duration: 0.5,
+      });
+    }
   };
 
-  const handleKeyDown= (keyCode:number)=>{
-    if(keyCode === 13){
+  const handleKeyDown = (keyCode: number) => {
+    if (keyCode === 13) {
       addListItem();
     }
-  }
+  };
 
   return (
     <div>
@@ -97,7 +103,9 @@ const TodoList = (props: ListPropsType) => {
           handleIptChange(e.target.value);
         }}
         onSearch={addListItem}
-        onKeyDown={e=>{handleKeyDown(e.keyCode)}}
+        onKeyDown={e => {
+          handleKeyDown(e.keyCode);
+        }}
       />
       <div className={styles.btnBox}>
         <Button onClick={selectAll}>全部选中</Button>
